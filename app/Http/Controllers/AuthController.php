@@ -49,7 +49,10 @@ class AuthController extends Controller
         $validatedData['_token'] = $request->except(['_token']);
         $validatedData['password'] = Hash::make($validatedData['password']);
         $validatedData['status'] = 'registered';
-        User::create($validatedData);
+        $user = User::create($validatedData);
+        event(new Registered($user));
+        auth()->login($user);
+
         return redirect('/login')->with('success','Registration successfull! Please login');
     }
 
